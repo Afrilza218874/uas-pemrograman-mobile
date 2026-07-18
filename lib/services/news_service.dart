@@ -7,50 +7,58 @@ class NewsService {
 
   NewsService() {
     _dio = Dio(BaseOptions(
-      baseUrl: AppConstants.newsApiBaseUrl,
-      connectTimeout: const Duration(seconds: 12),
-      receiveTimeout: const Duration(seconds: 12),
+      baseUrl: AppConstants.backendBaseUrl, // Gunakan Vercel backend sebagai proxy
+      connectTimeout: const Duration(seconds: 15),
+      receiveTimeout: const Duration(seconds: 15),
     ));
   }
 
+  /// Ambil berita terpopuler berdasarkan kategori
   Future<List<ArticleModel>> fetchTopHeadlines({
     String category = 'general',
     String language = 'en',
     int pageSize = AppConstants.newsPageSize,
   }) async {
     try {
-      final response = await _dio.get('/top-headlines', queryParameters: {
+      final response = await _dio.get('/api/news', queryParameters: {
+        'endpoint': 'top-headlines', // Diteruskan ke Vercel proxy
         'category': category,
         'language': language,
         'pageSize': pageSize,
         'apiKey': AppConstants.newsApiKey,
       });
+
       final articles = (response.data['articles'] as List)
           .map((json) => ArticleModel.fromJson(json as Map<String, dynamic>))
           .where((a) => a.isValid)
           .toList();
+
       return articles;
     } on DioException catch (e) {
       throw _handleError(e);
     }
   }
 
+  /// Cari berita berdasarkan kata kunci
   Future<List<ArticleModel>> searchNews(
     String query, {
     int pageSize = AppConstants.newsPageSize,
   }) async {
     try {
-      final response = await _dio.get('/everything', queryParameters: {
+      final response = await _dio.get('/api/news', queryParameters: {
+        'endpoint': 'everything', // Diteruskan ke Vercel proxy
         'q': query,
         'language': 'en',
         'sortBy': 'publishedAt',
         'pageSize': pageSize,
         'apiKey': AppConstants.newsApiKey,
       });
+
       final articles = (response.data['articles'] as List)
           .map((json) => ArticleModel.fromJson(json as Map<String, dynamic>))
           .where((a) => a.isValid)
           .toList();
+
       return articles;
     } on DioException catch (e) {
       throw _handleError(e);
