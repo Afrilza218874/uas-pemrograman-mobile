@@ -2,13 +2,10 @@
 --  NewsClip — Database Schema
 --  Compatible: TiDB Cloud Serverless (MySQL 8.0+)
 --  Instructions: Run this file in TiDB Cloud SQL Editor
+--  Database: test (default TiDB Cloud Serverless database)
 -- ============================================================
 
-CREATE DATABASE IF NOT EXISTS newsclip
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
-
-USE newsclip;
+USE test;
 
 -- ------------------------------------------------------------
 -- Table 1: users
