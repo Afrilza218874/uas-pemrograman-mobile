@@ -100,7 +100,11 @@ function getDB(): PDO
     try {
         return new PDO($dsn, $user, $pass, $pdoOptions);
     } catch (PDOException $e) {
-        errorResponse('Database connection failed: ' . $e->getMessage(), 500);
+        // [DEBUG] Tampilkan informasi user yang dipakai (jangan tampilkan password penuh)
+        $maskedPass = empty($pass) ? 'EMPTY' : substr($pass, 0, 2) . '***';
+        $debugInfo = " Host: $host | User: $user | Pass: $maskedPass";
+        
+        errorResponse('Database connection failed: ' . $e->getMessage() . $debugInfo, 500);
     }
 }
 
@@ -131,7 +135,7 @@ function createJWT(array $payload): string
     $header   = _base64urlEncode(json_encode(['typ' => 'JWT', 'alg' => 'HS256']));
     $payload  = array_merge($payload, [
         'iat' => time(),
-        'exp' => time() + (7 * 24 * 3600),
+        'exp' => time() + (7 * 24 * 3600), // Token berlaku 7 hari
     ]);
     $payloadB = _base64urlEncode(json_encode($payload));
     $sig      = _base64urlEncode(
@@ -149,6 +153,7 @@ function verifyJWT(string $token): ?array
 
     [$header, $payloadB, $sig] = $parts;
 
+    // Verifikasi signature
     $expected = _base64urlEncode(
         hash_hmac('sha256', "{$header}.{$payloadB}", _jwtSecret(), true)
     );
@@ -156,11 +161,13 @@ function verifyJWT(string $token): ?array
         return null;
     }
 
+    // Decode payload
     $payload = json_decode(_base64urlDecode($payloadB), true);
     if (!is_array($payload)) {
         return null;
     }
 
+    // Cek expiry
     if (isset($payload['exp']) && $payload['exp'] < time()) {
         return null;
     }
@@ -173,6 +180,7 @@ function verifyJWT(string $token): ?array
 // ============================================================
 function requireAuth(): int
 {
+    // Ambil Authorization header (support berbagai environment)
     $authHeader = '';
 
     if (!empty($_SERVER['HTTP_AUTHORIZATION'])) {
