@@ -10,9 +10,9 @@ $pass   = getenv('DB_PASS');
 $dbname = getenv('DB_NAME');
 
 echo "Testing TiDB Cloud Connection...\n";
-echo "Host: $host\n";
-echo "User: $user\n";
-echo "Pass: " . substr($pass, 0, 2) . "***\n";
+echo "Host: [$host] (len: " . strlen($host) . ")\n";
+echo "User: [$user] (len: " . strlen($user) . ")\n";
+echo "Pass: [" . substr($pass, 0, 2) . "***] (len: " . strlen($pass) . ")\n";
 
 $caBundles = [
     '/etc/pki/tls/certs/ca-bundle.crt',
@@ -37,27 +37,4 @@ if (mysqli_real_connect($mysqli, $host, $user, $pass, $dbname, $port, NULL, MYSQ
     mysqli_close($mysqli);
 } else {
     echo "MySQLi Error: " . mysqli_connect_error() . "\n";
-}
-
-echo "\n--- TEST 2: PDO ---\n";
-try {
-    $dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
-    $options = [
-        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-        PDO::MYSQL_ATTR_SSL_CA => $caPath,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true,
-    ];
-    $pdo = new PDO($dsn, $user, $pass, $options);
-    echo "PDO Connection SUCCESS (Verify=True)!\n";
-} catch (Exception $e) {
-    echo "PDO Error (Verify=True): " . $e->getMessage() . "\n";
-    
-    echo "\nTrying PDO with Verify=False...\n";
-    try {
-        $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
-        $pdo2 = new PDO($dsn, $user, $pass, $options);
-        echo "PDO Connection SUCCESS (Verify=False)!\n";
-    } catch (Exception $e2) {
-        echo "PDO Error (Verify=False): " . $e2->getMessage() . "\n";
-    }
 }
