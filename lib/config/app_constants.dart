@@ -1,0 +1,22 @@
+// NewsClip — App Constants
+class AppConstants {
+  static const String newsApiKey = '5463d07d858d421dbc963d74e52dfe9c';
+  static const String newsApiBaseUrl = 'https://newsapi.org/v2';
+
+  // Ganti dengan URL Vercel Anda yang sebenarnya!
+  static const String backendBaseUrl =
+      'https://uas-pemrograman-mobile.vercel.app';
+
+  static const String tokenKey = 'newsclip_auth_token';
+  static const int newsPageSize = 20;
+
+  static const List<Map<String, String>> categories = [
+    {'label': 'Semua', 'value': 'general', 'emoji': '\u{1F30D}'},
+    {'label': 'Bisnis', 'value': 'business', 'emoji': '\u{1F4BC}'},
+    {'label': 'Teknologi', 'value': 'technology', 'emoji': '\u{1F4BB}'},
+    {'label': 'Kesehatan', 'value': 'health', 'emoji': '\u{1F3E5}'},
+    {'label': 'Olahraga', 'value': 'sports', 'emoji': '\u26BD'},
+    {'label': 'Sains', 'value': 'science', 'emoji': '\u{1F52C}'},
+    {'label': 'Hiburan', 'value': 'entertainment', 'emoji': '\u{1F3AC}'},
+  ];
+}
