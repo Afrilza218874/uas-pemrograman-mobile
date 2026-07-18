@@ -87,14 +87,22 @@ function getDB(): PDO
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
         PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
         PDO::ATTR_EMULATE_PREPARES   => false,
-        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => false,
+        // TiDB Serverless membutuhkan SNI. Pada PHP, mengaktifkan VERIFY_SERVER_CERT memicu SNI.
+        PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT => true, 
     ];
 
+    $caFound = false;
     foreach ($caBundles as $caPath) {
         if (file_exists($caPath)) {
             $pdoOptions[PDO::MYSQL_ATTR_SSL_CA] = $caPath;
+            $caFound = true;
             break;
         }
+    }
+
+    // Jika tidak ketemu CA bundle, kita fallback ke false supaya tidak error sertifikat (meskipun SNI mungkin gagal)
+    if (!$caFound) {
+        $pdoOptions[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
     }
 
     try {
@@ -102,7 +110,7 @@ function getDB(): PDO
     } catch (PDOException $e) {
         // [DEBUG] Tampilkan informasi user yang dipakai (jangan tampilkan password penuh)
         $maskedPass = empty($pass) ? 'EMPTY' : substr($pass, 0, 2) . '***';
-        $debugInfo = " Host: $host | User: $user | Pass: $maskedPass";
+        $debugInfo = " Host: $host | User: $user | Pass: $maskedPass | CA: " . ($caFound ? 'Found' : 'Missing');
         
         errorResponse('Database connection failed: ' . $e->getMessage() . $debugInfo, 500);
     }
