@@ -1,15 +1,23 @@
 // NewsClip — App Constants
+// PENTING: Ganti backendBaseUrl dengan URL Vercel Anda!
+
 class AppConstants {
+  // ====== NEWS API ======
   static const String newsApiKey = '5463d07d858d421dbc963d74e52dfe9c';
   static const String newsApiBaseUrl = 'https://newsapi.org/v2';
 
-  // Ganti dengan URL Vercel Anda yang sebenarnya!
+  // ====== BACKEND API ======
+  // URL Vercel yang aktif (hasil deploy dengan suffix -beryl)
   static const String backendBaseUrl =
-      'https://uas-pemrograman-mobile.vercel.app';
+      'https://uas-pemrograman-mobile-beryl.vercel.app';
 
+  // ====== LOCAL STORAGE KEYS ======
   static const String tokenKey = 'newsclip_auth_token';
+
+  // ====== NEWS CONFIG ======
   static const int newsPageSize = 20;
 
+  // ====== CATEGORIES ======
   static const List<Map<String, String>> categories = [
     {'label': 'Semua', 'value': 'general', 'emoji': '\u{1F30D}'},
     {'label': 'Bisnis', 'value': 'business', 'emoji': '\u{1F4BC}'},
