@@ -1,0 +1,17 @@
+{
+  "functions": {
+    "api/**/*.php": {
+      "runtime": "vercel-php@0.7.2"
+    }
+  },
+  "routes": [
+    { "src": "/api/auth/register",        "dest": "/api/auth/register.php"       },
+    { "src": "/api/auth/login",           "dest": "/api/auth/login.php"          },
+    { "src": "/api/auth/me",              "dest": "/api/auth/me.php"             },
+    { "src": "/api/folders/([0-9]+)",     "dest": "/api/folders/detail.php?id=$1"},
+    { "src": "/api/folders",              "dest": "/api/folders/index.php"       },
+    { "src": "/api/bookmarks/([0-9]+)",   "dest": "/api/bookmarks/detail.php?id=$1"},
+    { "src": "/api/bookmarks",            "dest": "/api/bookmarks/index.php"     },
+    { "src": "/api/ping",                 "dest": "/api/ping.php"                }
+  ]
+}
